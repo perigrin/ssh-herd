@@ -1,4 +1,4 @@
-ps=blah.ps.com bloo.ps.com boo[2..25,32,41..70].ps.com
+ps=blah.ps.com bloo.ps.com boo[2..5,32,41..43].ps.com
 as=ws[1101..1105].as.com
 # use set operations to define new sets:
 foo={ps} + {ps} * {as} - {ps} / {as}
