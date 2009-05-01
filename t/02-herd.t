@@ -14,7 +14,8 @@ ok( my @hosts = $obj->get_hosts('as'), 'get_hosts as' );
 is_deeply(
     \@hosts,
     [
-        qw(ws1105.as.com ws1102.as.com ws1101.as.com ws1103.as.com ws1104.as.com)
+        qw(ws1105.as.com ws1102.as.com ws1101.as.com ws1103.as.com
+          ws1104.as.com)
     ],
     'as looks right'
 );
