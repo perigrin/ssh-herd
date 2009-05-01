@@ -34,15 +34,18 @@ has _herd => (
     handles    => [qw(get_hosts is_set_name)],
 );
 
-sub _build__herd { SSH::Herd->new( configfile => shift->configfile ) }
+sub _build__herd {
+    SSH::Herd->new(
+        $_[0]->has_configfile ? ( configfile => $_[0]->configfile ) : () );
+}
 
 sub run {
     my ($self) = @_;
     my $n = ( $self->expand_list ? "\n" : '' );
 
     for my $line ( @{ $self->extra_argv } ) {
-        if (is_AtomString($line)) {
-            print "${_}${n}" for @{ to_HostList($line) }
+        if ( is_AtomString($line) ) {
+            print "${_}${n}" for @{ to_HostList($line) };
         }
         if ( $self->is_set_name($line) ) {
             print "${_}${n}" for $self->get_hosts($line);

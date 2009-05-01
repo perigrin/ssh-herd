@@ -8,11 +8,10 @@ use Config::Any;
 use SSH::Herd::Types ':all';
 
 has configfile => (
-    isa        => 'Path::Class::File',
-    is         => 'ro',
-    coerce     => 1,
+    isa    => 'Path::Class::File',
+    is     => 'ro',
+    coerce => 1,
 );
-
 
 has raw_config => (
     isa        => 'HashRef',
@@ -22,6 +21,7 @@ has raw_config => (
 
 sub _build_raw_config {
     my ($self) = @_;
+    return {} unless $self->configfile;
     Config::Any->load_files(
         {
             files        => [ $self->configfile->absolute ],
