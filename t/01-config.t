@@ -9,10 +9,9 @@ use FindBin ();
     package Test;
     use Moose;
     with qw(SSH::Herd::Config);
-    sub _build_configfile { "$FindBin::Bin/fornodes.cnf" }
 }
 
-ok( my $obj  = Test->new );
+ok( my $obj  = Test->new(configfile => "$FindBin::Bin/fornodes.cnf") );
 ok( my $conf = $obj->config );
 
 is_deeply(
@@ -29,6 +28,6 @@ is_deeply(
             'boo4.ps.com',  'boo5.ps.com', 'boo32.ps.com', 'boo41.ps.com',
             'boo42.ps.com', 'boo43.ps.com'
         ],
-        'foo' => '{ps} + {ps} * {as} - {ps} / {as}',
+        'foo' => '({ps} + {as} + {bar}) / {as}',
     }
 );
