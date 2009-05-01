@@ -21,6 +21,23 @@ sub _build_configfile {
     return "$home/.fornodesrc";
 }
 
+has raw_config => (
+    isa        => 'HashRef',
+    is         => 'ro',
+    lazy_build => 1,
+);
+
+sub _build_raw_config {
+    my ($self) = @_;
+    Config::Any->load_files(
+        {
+            files        => [ $self->configfile->absolute ],
+            use_ext      => 0,
+            flatten_hash => 1
+        }
+    )->[0]{ $self->configfile->absolute };
+}
+
 has config => (
     isa        => 'HashRef',
     is         => 'ro',
@@ -29,19 +46,11 @@ has config => (
 
 sub _build_config {
     my ($self) = @_;
-    return $self->parse_config(
-        Config::Any->load_files(
-            {
-                files        => [ $self->configfile->absolute ],
-                use_ext      => 0,
-                flatten_hash => 1
-            }
-          )->[0]{ $self->configfile->absolute }
-    );
+    _parse_config( $self->raw_config );
 }
 
-sub parse_config {
-    my ( $self, $config ) = @_;
+sub _parse_config {
+    my ($config) = @_;
     for my $key ( keys %$config ) {
         next if is_DerivedHostString( $config->{$key} );
         $config->{$key} = to_HostList( $config->{$key} );

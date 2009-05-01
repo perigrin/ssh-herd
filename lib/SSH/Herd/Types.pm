@@ -35,8 +35,6 @@ subtype NotAtomString, as Str, where { not is_AtomString($_) };
 
 subtype DerivedHostString, as Str, where { $_ =~ /\{\w+\}/ };
 
-coerce HostList, from DerivedHostString, via { [$_] };
-
 coerce HostList, from NotAtomString, via { [ split /\s+/, $_ ] };
 
 coerce HostList, from AtomString, via {

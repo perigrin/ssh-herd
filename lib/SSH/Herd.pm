@@ -3,10 +3,20 @@ use Moose;
 
 with qw(SSH::Herd::Config);
 
+has sets => (
+    isa => 'HashRef',
+    is  => 'ro',    
+    lazy_build => 1,
+);
+
+sub _build_sets {
+    shift->config;
+}
+
 sub get_hosts {
     my ( $self, $key ) = @_;
-    my $hosts = $self->config->{$key};
-    return @$hosts;
+    my $set = $self->sets->{$key};
+    @$set;
 }
 
 no Moose;
