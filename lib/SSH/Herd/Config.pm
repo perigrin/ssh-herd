@@ -1,10 +1,11 @@
 package SSH::Herd::Config;
 use Moose::Role;
+
 use MooseX::Types::Path::Class qw(File);
 use File::HomeDir;
+
 use Config::Any;
-use Number::Range;
-use Set::Scalar;
+use SSH::Herd::Types ':all';
 
 has configfile => (
     isa        => 'Path::Class::File',
@@ -16,7 +17,7 @@ has configfile => (
 sub _build_configfile {
     my $home = File::HomeDir->my_home;
     confess "Can't find the home for the current user.\n"
-        unless defined $home;
+      unless defined $home;
     return "$home/.fornodesrc";
 }
 
@@ -35,40 +36,17 @@ sub _build_config {
                 use_ext      => 0,
                 flatten_hash => 1
             }
-            )->[0]{ $self->configfile->absolute }
+          )->[0]{ $self->configfile->absolute }
     );
-}
-
-sub parse_derived {
-    my ( $self, $value ) = @_;
-    $value =~ s/\{(\w+)\}/'$self->get_set(\''.$1.'\')'/eg;
-    $value;
 }
 
 sub parse_config {
     my ( $self, $config ) = @_;
     for my $key ( keys %$config ) {
-        if ( $config->{$key} =~ /\{\w+\}/ ) {
-            my $v = $self->parse_derived( $config->{$key} );
-            $config->{$key} = $v;
-        }
-        else {
-            my $v = [ map { expand_atom($_) } split /\s+/, $config->{$key} ];
-            $config->{$key} = $v;
-        }
+        next if is_DerivedHostString( $config->{$key} );
+        $config->{$key} = to_HostList( $config->{$key} );
     }
-
     return $config;
-}
-
-sub expand_atom {
-    my ($atom) = @_;
-    if ( $atom =~ /\[([\d.,]+)\]/ ) {
-        return
-            map { ( my $v = $atom ) =~ s/\[([\d.,]+)\]/$_/; $v; }
-            Number::Range->new($1)->range;
-    }
-    return $atom;
 }
 
 no Moose::Role;
