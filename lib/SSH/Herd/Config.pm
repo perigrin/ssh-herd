@@ -10,16 +10,9 @@ use SSH::Herd::Types ':all';
 has configfile => (
     isa        => 'Path::Class::File',
     is         => 'ro',
-    lazy_build => 1,
     coerce     => 1,
 );
 
-sub _build_configfile {
-    my $home = File::HomeDir->my_home;
-    confess "Can't find the home for the current user.\n"
-      unless defined $home;
-    return "$home/.fornodesrc";
-}
 
 has raw_config => (
     isa        => 'HashRef',
