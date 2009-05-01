@@ -16,9 +16,9 @@ use MooseX::Types -declare, [
 # import builtin types
 use MooseX::Types::Moose 'Str', 'ArrayRef';
 
-subtype Atom, as Str, where { $_ =~ /\[([\d.,]+)\]/ };
+subtype Host, as Str,  where { $_ =~ /$RE{net}{domain}/ };
 
-subtype Host, as Str, where { $_ =~ /$RE{net}{domain}/ };
+subtype Atom, as Host, where { $_ =~ /\[([\d.,]+)\]/ };
 
 subtype HostList, as ArrayRef, where {
     my $list = $_;
